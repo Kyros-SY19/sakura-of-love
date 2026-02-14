@@ -4,92 +4,130 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sakura of Love 🌸</title>
-    <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=Quicksand:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
+  <!-- Partículas brillantes -->
+  <div class="sparkles-container"></div>
+
+  <!-- Música de fondo -->
+  <audio id="bg-music" src="audio/audio.mp3" loop></audio>
+
+  <!-- Pétalos -->
+  <div class="petals-container"></div>
+
   <body>
-    <!-- 🎵 Música de fondo -->
-    <audio id="bgMusic" src="./assets/audio/music.mp3" loop></audio>
+    <!-- Formulario inicial -->
+    <div id="form-container" class="form-container">
+      <div class="form-card">
+        <h1 class="form-title">🌸 Sakura of Love</h1>
+        <p class="form-subtitle">Crea una carta de amor única</p>
 
-    <!-- 📝 Formulario -->
-    <div class="form-container hidden" id="form-container">
-      <h1>Sakura of Love 🌸</h1>
-      <p>Crea tu link romántico</p>
+        <form id="love-form">
+          <div class="form-group">
+            <label for="para">Para:</label>
+            <input
+              type="text"
+              id="para"
+              name="para"
+              placeholder="El nombre del amor de tu vida"
+              required
+            />
+          </div>
 
-      <form id="love-form">
-        <input id="to" type="text" placeholder="Para (ej: Maria)" required />
-        <input id="from" type="text" placeholder="De (ej: Carlos)" required />
-        <input id="since" type="datetime-local" required />
-        <button type="submit">Crear link</button>
+          <div class="form-group">
+            <label for="de">De:</label>
+            <input
+              type="text"
+              id="de"
+              name="de"
+              placeholder="Tu nombre"
+              required
+            />
+          </div>
 
-        <div class="share-box hidden" id="share-box">
-          <input type="text" id="share-url" readonly />
-          <button type="button" id="copy-url">Copiar link</button>
+          <div class="form-group">
+            <label for="fecha">Desde cuándo los amo:</label>
+            <input type="datetime-local" id="fecha" name="fecha" required />
+          </div>
+
+          <button type="submit" class="btn-submit">
+            ✨ Crear mi carta de amor
+          </button>
+        </form>
+
+        <div id="link-container" class="link-container hidden">
+          <p class="link-label">¡Tu carta está lista! Comparte este enlace:</p>
+          <div class="link-display">
+            <input type="text" id="generated-link" readonly />
+            <button id="copy-btn" class="btn-copy">Copiar</button>
+          </div>
+          <button id="view-btn" class="btn-view">Ver mi carta 💕</button>
         </div>
-      </form>
+      </div>
     </div>
 
-    <!-- 🌸 Escena romántica -->
-    <div class="container" id="scene">
-      <!-- Capa de pétalos -->
-      <div id="petals-layer"></div>
-
-      <div class="left">
-        <!-- Árbol Sakura en SVG -->
-        <svg class="sakura" viewBox="0 0 300 400">
-          <!-- Tronco -->
+    <!-- Contenedor de animación -->
+    <div id="animation-container" class="animation-container hidden">
+      <!-- Intro: Corazón inicial -->
+      <div id="intro-heart" class="intro-heart">
+        <svg viewBox="0 0 100 100" class="heart-svg">
           <path
-            d="M150 380 C140 300, 145 240, 150 200 C155 240, 160 300, 150 380 Z"
-            fill="#7a4a2e"
+            d="M50,90 C50,90 10,60 10,35 C10,20 20,10 32,10 C40,10 47,15 50,22 C53,15 60,10 68,10 C80,10 90,20 90,35 C90,60 50,90 50,90 Z"
+            fill="#E57373"
+            class="heart-path"
           />
-
-          <!-- Ramas -->
-          <path
-            d="M150 230 C120 200, 80 170, 60 140"
-            stroke="#7a4a2e"
-            stroke-width="8"
-            fill="none"
-          />
-          <path
-            d="M150 220 C180 190, 220 160, 250 130"
-            stroke="#7a4a2e"
-            stroke-width="8"
-            fill="none"
-          />
-
-          <!-- Flores rosadas -->
-          <circle cx="60" cy="140" r="8" fill="#f4a6c1" />
-          <circle cx="80" cy="155" r="6" fill="#ffd1e3" />
-          <circle cx="100" cy="165" r="7" fill="#f4a6c1" />
-
-          <circle cx="250" cy="130" r="8" fill="#f4a6c1" />
-          <circle cx="230" cy="150" r="6" fill="#ffd1e3" />
-          <circle cx="210" cy="165" r="7" fill="#f4a6c1" />
         </svg>
-
-        <div class="ground"></div>
+        <div class="intro-text">San Valentín</div>
       </div>
 
-      <div class="right">
-        <div class="card">
-          <h1>Para el amor de mi vida: <span id="toName"></span></h1>
+      <!-- Texto final -->
+      <div id="final-text" class="final-text hidden">
+        <div class="final-container">
+          <!-- GIF izquierda -->
+          <div class="gif-container">
+            <div
+              class="tenor-gif-embed"
+              data-postid="5823594344953222998"
+              data-share-method="host"
+              data-aspect-ratio="1.27907"
+              data-width="100%"
+            >
+              <a href="https://tenor.com/view/muach-gif-5823594344953222998"
+                >Muach GIF</a
+              >
+              from <a href="https://tenor.com/search/muach-gifs">Muach GIFs</a>
+            </div>
+          </div>
 
-          <p>
-            Si pudiera elegir un lugar seguro,<br />
-            sería a tu lado.
-          </p>
-
-          <p>
-            Cuanto más tiempo estoy contigo,<br />
-            más te amo.
-          </p>
-
-          <p class="signature">— Con amor, <span id="fromName"></span></p>
+          <!-- Texto derecha -->
+          <div class="text-content">
+            <p id="text-para" class="text-para"></p>
+            <p id="text-message" class="text-message"></p>
+            <p class="text-love">— I Love You! 💕</p>
+            <p id="text-de" class="text-de"></p>
+            <div id="counter" class="counter"></div>
+          </div>
         </div>
       </div>
-
-      <div class="counter" id="counter"></div>
     </div>
 
-    <script src="./js/main.js"></script>
+    <!-- Scripts -->
+    <script async src="https://tenor.com/embed.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>

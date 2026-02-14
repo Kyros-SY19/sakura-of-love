@@ -1,158 +1,224 @@
-// =========================
-// Utils
-// =========================
-const qs = (id) => document.getElementById(id);
+// ========================================
+// CONFIGURACIÓN Y VARIABLES GLOBALES
+// ========================================
 
-function getParams() {
-  const params = new URLSearchParams(window.location.search);
-  return {
-    to: params.get("to"),
-    from: params.get("from"),
-    since: params.get("since"),
-  };
-}
+let animationData = {
+  para: "",
+  de: "",
+  fecha: null,
+};
 
-function buildShareUrl({ to, from, since }) {
-  const url = new URL(window.location.href);
-  url.searchParams.set("to", encodeURIComponent(to));
-  url.searchParams.set("from", encodeURIComponent(from));
-  url.searchParams.set("since", encodeURIComponent(since));
-  return url.toString();
-}
+let counterInterval = null;
 
-function parseSince(raw) {
-  if (!raw) return null;
-  const safe = decodeURIComponent(raw).replace(" ", "T");
-  const d = new Date(safe);
-  if (isNaN(d.getTime())) return null;
-  return d;
-}
+const romanticMessages = [
+  (name) =>
+    `Si pudiera elegir un lugar seguro, sería a tu lado, ${name}. Cuanto más tiempo estoy contigo, más te amo.`,
+  (name) =>
+    `${name}, no prometo un amor perfecto, prometo un amor real, de esos que se quedan incluso en los días difíciles.`,
+  (name) =>
+    `Amarte no fue una decisión, ${name}, fue algo que simplemente pasó… y no pienso detenerlo nunca.`,
+  (name) =>
+    `Tu sonrisa, ${name}, tiene la costumbre de arreglar mis días, incluso cuando todo parece complicado.`,
+  (name) =>
+    `No sé qué hice para merecerte, ${name}, pero prometo cuidarte como si fueras mi mayor tesoro.`,
+  (name) =>
+    `Contigo, ${name}, entendí que el amor no es buscar a alguien perfecto, sino amar a alguien imperfecto perfectamente.`,
+  (name) =>
+    `${name}, eres mi casualidad favorita, mi lugar seguro y mi persona en este mundo.`,
+  (name) =>
+    `A tu lado, ${name}, aprendí que el amor no hace ruido, pero lo cambia todo.`,
+  (name) =>
+    `No necesito promesas eternas, ${name}, me basta con que sigas eligiéndome cada día.`,
+  (name) =>
+    `Si algún día me pierdo, ${name}, recuérdame que mi hogar siempre ha sido tu abrazo.`,
+];
 
-// =========================
-// DOM (ids reales de tu HTML)
-// =========================
-const formContainer = qs("form");
-const form = qs("love-form");
-const scene = qs("content");
+// ========================================
+// INICIALIZACIÓN
+// ========================================
 
-const toNameEl = qs("toName");
-const fromNameEl = qs("fromName");
-const counterEl = qs("counter");
-
-const shareBox = qs("share-box");
-const shareUrlInput = qs("share-url");
-const copyBtn = qs("copy-url");
-
-// =========================
-// Init
-// =========================
 document.addEventListener("DOMContentLoaded", () => {
-  try {
-    const params = getParams();
-    const sinceDate = parseSince(params.since);
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasParams =
+    urlParams.has("para") && urlParams.has("de") && urlParams.has("fecha");
 
-    if (params.to && params.from && sinceDate) {
-      startScene({ ...params, sinceDate });
-    } else {
-      formContainer.classList.remove("hidden");
-    }
-  } catch (e) {
-    console.error("Error fatal:", e);
-    formContainer.classList.remove("hidden");
+  if (hasParams) {
+    animationData.para = urlParams.get("para");
+    animationData.de = urlParams.get("de");
+    animationData.fecha = new Date(urlParams.get("fecha"));
+
+    document.getElementById("form-container").classList.add("hidden");
+    document.getElementById("animation-container").classList.remove("hidden");
+
+    setTimeout(startAnimation, 500);
+  } else {
+    setupForm();
   }
 });
 
-// =========================
-// Form submit
-// =========================
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+// ========================================
+// FORMULARIO
+// ========================================
 
-  const to = qs("to").value.trim();
-  const from = qs("from").value.trim();
-  const since = qs("since").value;
+function setupForm() {
+  const form = document.getElementById("love-form");
+  const copyBtn = document.getElementById("copy-btn");
+  const viewBtn = document.getElementById("view-btn");
 
-  if (!to || !from || !since) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  const shareUrl = buildShareUrl({ to, from, since });
+    const para = document.getElementById("para").value;
+    const de = document.getElementById("de").value;
+    const fecha = document.getElementById("fecha").value;
 
-  shareUrlInput.value = shareUrl;
-  shareBox.classList.remove("hidden");
+    const baseUrl = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams({ para, de, fecha });
+    const generatedUrl = `${baseUrl}?${params.toString()}`;
 
-  localStorage.setItem("sakuraOfLove", JSON.stringify({ to, from, since }));
-});
+    document.getElementById("generated-link").value = generatedUrl;
+    document.getElementById("link-container").classList.remove("hidden");
 
-// =========================
-// Copy link
-// =========================
-copyBtn.addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(shareUrlInput.value);
-    copyBtn.textContent = "¡Copiado! 💖";
-    setTimeout(() => (copyBtn.textContent = "Copiar link"), 2000);
-  } catch {
-    alert("No se pudo copiar el link, cópialo manualmente 😅");
-  }
-});
+    animationData.para = para;
+    animationData.de = de;
+    animationData.fecha = new Date(fecha);
+  });
 
-// =========================
-// Scene
-// =========================
-function startScene({ to, from, sinceDate }) {
-  formContainer.classList.add("hidden");
+  copyBtn.addEventListener("click", () => {
+    const linkInput = document.getElementById("generated-link");
+    linkInput.select();
+    document.execCommand("copy");
 
-  toNameEl.textContent = to;
-  fromNameEl.textContent = from;
+    copyBtn.textContent = "¡Copiado! ✓";
+    setTimeout(() => (copyBtn.textContent = "Copiar"), 2000);
+  });
 
-  scene.classList.add("show");
-
-  startCounter(sinceDate);
-  startPetals();
+  viewBtn.addEventListener("click", () => {
+    document.getElementById("form-container").classList.add("hidden");
+    document.getElementById("animation-container").classList.remove("hidden");
+    setTimeout(startAnimation, 500);
+  });
 }
 
-// =========================
-// Counter
-// =========================
-function startCounter(startDate) {
-  function update() {
+// ========================================
+// SECUENCIA PRINCIPAL
+// ========================================
+
+function startAnimation() {
+  const introHeart = document.getElementById("intro-heart");
+  introHeart.addEventListener("click", beginSequence, { once: true });
+  introHeart.addEventListener("touchstart", beginSequence, { once: true });
+}
+
+function beginSequence() {
+  const introHeart = document.getElementById("intro-heart");
+  const music = document.getElementById("bg-music");
+
+  music.volume = 0.6;
+  music.play().catch(() => {});
+
+  introHeart.classList.add("contracting");
+
+  setTimeout(() => {
+    introHeart.classList.add("hidden");
+    showFinal();
+    startPetals();
+    startSparkles();
+  }, 2000);
+}
+
+// ========================================
+// TEXTO FINAL Y CONTADOR
+// ========================================
+
+function showFinal() {
+  const finalText = document.getElementById("final-text");
+  setupFinalText();
+  finalText.classList.remove("hidden");
+  finalText.classList.add("showing");
+  startCounter();
+}
+
+function setupFinalText() {
+  const textPara = document.getElementById("text-para");
+  const textMessage = document.getElementById("text-message");
+  const textDe = document.getElementById("text-de");
+
+  textPara.textContent = `Para el amor de mi vida:`;
+  textDe.textContent = `Con amor, ${animationData.de}`;
+
+  const randomIndex = Math.floor(Math.random() * romanticMessages.length);
+  const message = romanticMessages[randomIndex](animationData.para);
+
+  let i = 0;
+  textMessage.textContent = "";
+
+  const typing = setInterval(() => {
+    textMessage.textContent += message.charAt(i);
+    i++;
+    if (i >= message.length) clearInterval(typing);
+  }, 45);
+}
+
+function startCounter() {
+  const counterDiv = document.getElementById("counter");
+
+  function updateCounter() {
     const now = new Date();
-    const diff = Math.max(0, now - startDate);
+    const diff = now - animationData.fecha;
 
-    const seconds = Math.floor(diff / 1000) % 60;
-    const minutes = Math.floor(diff / (1000 * 60)) % 60;
-    const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    counterEl.textContent = `Mi amor por ti comenzó hace… ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos 💕`;
+    counterDiv.textContent = `Mi amor por ti comenzó hace: ${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
   }
 
-  update();
-  setInterval(update, 1000);
+  updateCounter();
+  counterInterval = setInterval(updateCounter, 1000);
 }
 
-// =========================
-// Petals
-// =========================
-function createPetal() {
-  const petal = document.createElement("div");
-  petal.className = "petal";
-
-  const size = Math.random() * 6 + 6;
-  const left = Math.random() * window.innerWidth;
-  const duration = Math.random() * 6 + 6;
-  const wind = (Math.random() - 0.5) * 200;
-
-  petal.style.width = `${size}px`;
-  petal.style.height = `${size}px`;
-  petal.style.left = `${left}px`;
-  petal.style.animationDuration = `${duration}s`;
-  petal.style.setProperty("--x", `${wind}px`);
-
-  document.body.appendChild(petal);
-
-  setTimeout(() => petal.remove(), duration * 1000);
-}
+// ========================================
+// EFECTOS
+// ========================================
 
 function startPetals() {
-  setInterval(createPetal, 400);
+  const container = document.querySelector(".petals-container");
+
+  setInterval(() => {
+    const petal = document.createElement("div");
+    petal.classList.add("petal");
+
+    petal.style.left = Math.random() * 100 + "vw";
+    petal.style.animationDuration = 6 + Math.random() * 5 + "s";
+    petal.style.opacity = Math.random() * 0.5 + 0.4;
+
+    container.appendChild(petal);
+    setTimeout(() => petal.remove(), 12000);
+  }, 350);
 }
+
+function startSparkles() {
+  const container = document.querySelector(".sparkles-container");
+
+  setInterval(() => {
+    const sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
+
+    sparkle.style.left = Math.random() * 100 + "vw";
+    sparkle.style.animationDuration = 8 + Math.random() * 6 + "s";
+    sparkle.style.opacity = Math.random() * 0.6 + 0.3;
+
+    container.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 15000);
+  }, 500);
+}
+
+// ========================================
+// LIMPIEZA
+// ========================================
+
+window.addEventListener("beforeunload", () => {
+  if (counterInterval) clearInterval(counterInterval);
+});
