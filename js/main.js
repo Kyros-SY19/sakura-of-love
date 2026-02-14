@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hasParams) {
     animationData.para = urlParams.get("para");
     animationData.de = urlParams.get("de");
-    animationData.fecha = new Date(urlParams.get("fecha"));
+    animationData.fecha = new Date(urlParams.get("fecha").replace("T", " "));
 
     document.getElementById("form-container").classList.add("hidden");
     document.getElementById("animation-container").classList.remove("hidden");
@@ -81,7 +81,7 @@ function setupForm() {
 
     animationData.para = para;
     animationData.de = de;
-    animationData.fecha = new Date(fecha);
+    animationData.fecha = new Date(fecha.replace("T", " "));
   });
 
   copyBtn.addEventListener("click", () => {
@@ -121,16 +121,9 @@ function beginSequence() {
 
   if (music) {
     music.volume = 0.6;
-
-    const playPromise = music.play();
-
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        console.log(
-          "El navegador bloqueó el autoplay hasta interacción válida.",
-        );
-      });
-    }
+    music.play().catch(() => {
+      console.log("Autoplay bloqueado hasta interacción válida.");
+    });
   }
 
   introHeart.classList.add("contracting");
@@ -160,7 +153,7 @@ function setupFinalText() {
   const textMessage = document.getElementById("text-message");
   const textDe = document.getElementById("text-de");
 
-  textPara.textContent = `Para el amor de mi vida: 💖`;
+  textPara.textContent = `Para el amor de mi vida 💖`;
   textDe.textContent = `Con amor, ${animationData.de}`;
 
   const randomIndex = Math.floor(Math.random() * romanticMessages.length);
@@ -169,11 +162,17 @@ function setupFinalText() {
   let i = 0;
   textMessage.textContent = "";
 
-  const typing = setInterval(() => {
-    textMessage.textContent += message.charAt(i);
-    i++;
-    if (i >= message.length) clearInterval(typing);
-  }, 45);
+  function typeWriter() {
+    if (i < message.length) {
+      textMessage.textContent += message.charAt(i);
+      i++;
+      setTimeout(() => {
+        requestAnimationFrame(typeWriter);
+      }, 35);
+    }
+  }
+
+  typeWriter();
 }
 
 function startCounter() {
