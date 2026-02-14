@@ -14,24 +14,30 @@ function getParams() {
 
 function buildShareUrl({ to, from, since }) {
   const url = new URL(window.location.href);
-  url.searchParams.set("to", to);
-  url.searchParams.set("from", from);
-  url.searchParams.set("since", since);
+  url.searchParams.set("to", encodeURIComponent(to));
+  url.searchParams.set("from", encodeURIComponent(from));
+  url.searchParams.set("since", encodeURIComponent(since));
   return url.toString();
 }
 
+function parseSince(raw) {
+  if (!raw) return null;
+  const safe = decodeURIComponent(raw).replace(" ", "T");
+  const d = new Date(safe);
+  if (isNaN(d.getTime())) return null;
+  return d;
+}
+
 // =========================
-// DOM
+// DOM (ids reales de tu HTML)
 // =========================
-const formContainer = qs("form-container");
+const formContainer = qs("form");
 const form = qs("love-form");
-const scene = qs("scene");
+const scene = qs("content");
 
 const toNameEl = qs("toName");
 const fromNameEl = qs("fromName");
-const sinceTextEl = qs("sinceText");
 const counterEl = qs("counter");
-const petalsLayer = qs("petals-layer");
 
 const shareBox = qs("share-box");
 const shareUrlInput = qs("share-url");
@@ -41,11 +47,17 @@ const copyBtn = qs("copy-url");
 // Init
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
-  const params = getParams();
+  try {
+    const params = getParams();
+    const sinceDate = parseSince(params.since);
 
-  if (params.to && params.from && params.since) {
-    startScene(params);
-  } else {
+    if (params.to && params.from && sinceDate) {
+      startScene({ ...params, sinceDate });
+    } else {
+      formContainer.classList.remove("hidden");
+    }
+  } catch (e) {
+    console.error("Error fatal:", e);
     formContainer.classList.remove("hidden");
   }
 });
@@ -64,11 +76,9 @@ form.addEventListener("submit", (e) => {
 
   const shareUrl = buildShareUrl({ to, from, since });
 
-  // Mostrar link generado
   shareUrlInput.value = shareUrl;
   shareBox.classList.remove("hidden");
 
-  // Guardar por comodidad
   localStorage.setItem("sakuraOfLove", JSON.stringify({ to, from, since }));
 });
 
@@ -88,19 +98,15 @@ copyBtn.addEventListener("click", async () => {
 // =========================
 // Scene
 // =========================
-function startScene({ to, from, since }) {
+function startScene({ to, from, sinceDate }) {
   formContainer.classList.add("hidden");
 
   toNameEl.textContent = to;
   fromNameEl.textContent = from;
-  sinceTextEl.textContent = new Date(since).toLocaleString("es-ES", {
-    dateStyle: "long",
-    timeStyle: "short",
-  });
 
   scene.classList.add("show");
 
-  startCounter(new Date(since));
+  startCounter(sinceDate);
   startPetals();
 }
 
@@ -117,7 +123,7 @@ function startCounter(startDate) {
     const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    counterEl.textContent = `Mi amor por ti comenzó hace… ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos`;
+    counterEl.textContent = `Mi amor por ti comenzó hace… ${days} días ${hours} horas ${minutes} minutos ${seconds} segundos 💕`;
   }
 
   update();
@@ -142,7 +148,7 @@ function createPetal() {
   petal.style.animationDuration = `${duration}s`;
   petal.style.setProperty("--x", `${wind}px`);
 
-  petalsLayer.appendChild(petal);
+  document.body.appendChild(petal);
 
   setTimeout(() => petal.remove(), duration * 1000);
 }
