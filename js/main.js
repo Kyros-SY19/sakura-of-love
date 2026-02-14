@@ -162,17 +162,16 @@ function setupFinalText() {
   let i = 0;
   textMessage.textContent = "";
 
-  function typeWriter() {
-    if (i < message.length) {
-      textMessage.textContent += message.charAt(i);
-      i++;
-      setTimeout(() => {
-        requestAnimationFrame(typeWriter);
-      }, 35);
-    }
-  }
+  const typingSpeed = window.innerWidth < 768 ? 65 : 40; // más lento en móvil
 
-  typeWriter();
+  const typing = setInterval(() => {
+    if (i < message.length) {
+      textMessage.textContent += message[i];
+      i++;
+    } else {
+      clearInterval(typing);
+    }
+  }, typingSpeed);
 }
 
 function startCounter() {
