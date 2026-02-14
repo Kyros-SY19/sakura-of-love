@@ -106,16 +106,32 @@ function setupForm() {
 
 function startAnimation() {
   const introHeart = document.getElementById("intro-heart");
-  introHeart.addEventListener("click", beginSequence, { once: true });
-  introHeart.addEventListener("touchstart", beginSequence, { once: true });
+
+  const handleStart = () => {
+    beginSequence();
+  };
+
+  introHeart.addEventListener("click", handleStart, { once: true });
+  introHeart.addEventListener("touchstart", handleStart, { once: true });
 }
 
 function beginSequence() {
   const introHeart = document.getElementById("intro-heart");
   const music = document.getElementById("bg-music");
 
-  music.volume = 0.6;
-  music.play().catch(() => {});
+  if (music) {
+    music.volume = 0.6;
+
+    const playPromise = music.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        console.log(
+          "El navegador bloqueó el autoplay hasta interacción válida.",
+        );
+      });
+    }
+  }
 
   introHeart.classList.add("contracting");
 
