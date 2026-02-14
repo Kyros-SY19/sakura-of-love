@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hasParams) {
     animationData.para = urlParams.get("para");
     animationData.de = urlParams.get("de");
-    animationData.fecha = new Date(urlParams.get("fecha").replace("T", " "));
+    animationData.fecha = new Date(urlParams.get("fecha"));
 
     document.getElementById("form-container").classList.add("hidden");
     document.getElementById("animation-container").classList.remove("hidden");
@@ -81,7 +81,7 @@ function setupForm() {
 
     animationData.para = para;
     animationData.de = de;
-    animationData.fecha = new Date(fecha.replace("T", " "));
+    animationData.fecha = new Date(fecha);
   });
 
   copyBtn.addEventListener("click", () => {
@@ -121,9 +121,7 @@ function beginSequence() {
 
   if (music) {
     music.volume = 0.6;
-    music.play().catch(() => {
-      console.log("Autoplay bloqueado hasta interacción válida.");
-    });
+    music.play().catch(() => {});
   }
 
   introHeart.classList.add("contracting");
@@ -153,7 +151,7 @@ function setupFinalText() {
   const textMessage = document.getElementById("text-message");
   const textDe = document.getElementById("text-de");
 
-  textPara.textContent = `Para el amor de mi vida 💖`;
+  textPara.textContent = "Para el amor de mi vida 💖";
   textDe.textContent = `Con amor, ${animationData.de}`;
 
   const randomIndex = Math.floor(Math.random() * romanticMessages.length);
@@ -162,16 +160,11 @@ function setupFinalText() {
   let i = 0;
   textMessage.textContent = "";
 
-  const typingSpeed = window.innerWidth < 768 ? 65 : 40; // más lento en móvil
-
   const typing = setInterval(() => {
-    if (i < message.length) {
-      textMessage.textContent += message[i];
-      i++;
-    } else {
-      clearInterval(typing);
-    }
-  }, typingSpeed);
+    textMessage.textContent += message.charAt(i);
+    i++;
+    if (i >= message.length) clearInterval(typing);
+  }, 45);
 }
 
 function startCounter() {
@@ -199,44 +192,34 @@ function startCounter() {
 
 function startPetals() {
   const container = document.querySelector(".petals-container");
-  const isMobile = window.innerWidth < 768;
 
-  setInterval(
-    () => {
-      const petal = document.createElement("div");
-      petal.classList.add("petal");
+  setInterval(() => {
+    const petal = document.createElement("div");
+    petal.classList.add("petal");
 
-      petal.style.left = Math.random() * 100 + "vw";
-      petal.style.animationDuration =
-        (isMobile ? 10 : 6) + Math.random() * 4 + "s";
-      petal.style.opacity = Math.random() * 0.5 + 0.4;
+    petal.style.left = Math.random() * 100 + "vw";
+    petal.style.animationDuration = 6 + Math.random() * 5 + "s";
+    petal.style.opacity = Math.random() * 0.5 + 0.4;
 
-      container.appendChild(petal);
-      setTimeout(() => petal.remove(), 15000);
-    },
-    isMobile ? 900 : 350,
-  );
+    container.appendChild(petal);
+    setTimeout(() => petal.remove(), 12000);
+  }, 350);
 }
 
 function startSparkles() {
   const container = document.querySelector(".sparkles-container");
-  const isMobile = window.innerWidth < 768;
 
-  setInterval(
-    () => {
-      const sparkle = document.createElement("div");
-      sparkle.classList.add("sparkle");
+  setInterval(() => {
+    const sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
 
-      sparkle.style.left = Math.random() * 100 + "vw";
-      sparkle.style.animationDuration =
-        (isMobile ? 12 : 8) + Math.random() * 4 + "s";
-      sparkle.style.opacity = Math.random() * 0.6 + 0.3;
+    sparkle.style.left = Math.random() * 100 + "vw";
+    sparkle.style.animationDuration = 8 + Math.random() * 6 + "s";
+    sparkle.style.opacity = Math.random() * 0.6 + 0.3;
 
-      container.appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 16000);
-    },
-    isMobile ? 1200 : 500,
-  );
+    container.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 15000);
+  }, 500);
 }
 
 // ========================================
