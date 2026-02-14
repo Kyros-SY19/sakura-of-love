@@ -92,6 +92,7 @@ body {
   outline: none;
 }
 
+/* ================= BOTONES ================= */
 .btn-submit,
 .btn-view,
 .btn-copy {
@@ -112,6 +113,62 @@ body {
 .btn-view:hover,
 .btn-copy:hover {
   transform: translateY(-2px) scale(1.02);
+}
+
+/* ================= LINK GENERADO ================= */
+.link-container {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #ffd1dc;
+  animation: fadeInLink 0.5s ease;
+}
+
+@keyframes fadeInLink {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.link-label {
+  font-size: 0.9rem;
+  color: var(--text-romantic);
+  margin-bottom: 0.6rem;
+  text-align: center;
+}
+
+.link-display {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.link-display input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  border: 2px solid #ffd6e5;
+  font-size: 0.75rem;
+  outline: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #6b3f3f;
+}
+
+.link-display input:focus {
+  border-color: var(--sakura-deep);
+  box-shadow: 0 0 0 3px rgba(244, 143, 177, 0.25);
+}
+
+.btn-copy {
+  width: auto;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.75rem;
+  margin-top: 0;
+  white-space: nowrap;
 }
 
 /* ================= HEART INTRO ================= */

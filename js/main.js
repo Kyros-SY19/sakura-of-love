@@ -144,7 +144,7 @@ function setupFinalText() {
   const textMessage = document.getElementById("text-message");
   const textDe = document.getElementById("text-de");
 
-  textPara.textContent = `Para el amor de mi vida:`;
+  textPara.textContent = `Para el amor de mi vida: 💖`;
   textDe.textContent = `Con amor, ${animationData.de}`;
 
   const randomIndex = Math.floor(Math.random() * romanticMessages.length);
