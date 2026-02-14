@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sakura of Love 🌸</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <!-- 🎵 Música de fondo -->
+    <audio id="bgMusic" src="./assets/audio/music.mp3" loop></audio>
+
+    <!-- 📝 Formulario -->
+    <div class="form-container hidden" id="form-container">
+      <h1>Sakura of Love 🌸</h1>
+      <p>Crea tu link romántico</p>
+
+      <form id="love-form">
+        <input id="to" type="text" placeholder="Para (ej: Maria)" required />
+        <input id="from" type="text" placeholder="De (ej: Carlos)" required />
+        <input id="since" type="datetime-local" required />
+        <button type="submit">Crear link</button>
+
+        <div class="share-box hidden" id="share-box">
+          <input type="text" id="share-url" readonly />
+          <button type="button" id="copy-url">Copiar link</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 🌸 Escena romántica -->
+    <div class="container" id="scene">
+      <!-- Capa de pétalos -->
+      <div id="petals-layer"></div>
+
+      <div class="left">
+        <!-- Árbol Sakura en SVG -->
+        <svg class="sakura" viewBox="0 0 300 400">
+          <!-- Tronco -->
+          <path
+            d="M150 380 C140 300, 145 240, 150 200 C155 240, 160 300, 150 380 Z"
+            fill="#7a4a2e"
+          />
+
+          <!-- Ramas -->
+          <path
+            d="M150 230 C120 200, 80 170, 60 140"
+            stroke="#7a4a2e"
+            stroke-width="8"
+            fill="none"
+          />
+          <path
+            d="M150 220 C180 190, 220 160, 250 130"
+            stroke="#7a4a2e"
+            stroke-width="8"
+            fill="none"
+          />
+
+          <!-- Flores rosadas -->
+          <circle cx="60" cy="140" r="8" fill="#f4a6c1" />
+          <circle cx="80" cy="155" r="6" fill="#ffd1e3" />
+          <circle cx="100" cy="165" r="7" fill="#f4a6c1" />
+
+          <circle cx="250" cy="130" r="8" fill="#f4a6c1" />
+          <circle cx="230" cy="150" r="6" fill="#ffd1e3" />
+          <circle cx="210" cy="165" r="7" fill="#f4a6c1" />
+        </svg>
+
+        <div class="ground"></div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <h1>Para el amor de mi vida: <span id="toName"></span></h1>
+
+          <p>
+            Si pudiera elegir un lugar seguro,<br />
+            sería a tu lado.
+          </p>
+
+          <p>
+            Cuanto más tiempo estoy contigo,<br />
+            más te amo.
+          </p>
+
+          <p class="signature">— Con amor, <span id="fromName"></span></p>
+        </div>
+      </div>
+
+      <div class="counter" id="counter"></div>
+    </div>
+
+    <script src="./js/main.js"></script>
+  </body>
+</html>
